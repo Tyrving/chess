@@ -10,4 +10,4 @@ Open any of the included .pde files, and press the run button.
 
 This does not include a computer to play chess against, this is just a game.
 
-Steal my code please, then I dont be the only one bullied for my garbage
+Steal my code please, then I won't be the only one bullied for my garbage
