@@ -91,3 +91,7 @@ boolean somethingInTheWay(int x, int y, int targetX, int targetY){
   }
   return false;
 }
+
+boolean globalChecks(int x, int y, int targetX, int targetY, boolean white){
+  return false;
+}
