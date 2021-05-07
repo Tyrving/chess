@@ -24,7 +24,7 @@ class Pawn extends BasePiece {
     }
   }
   boolean checkMove(int targetX, int targetY, int x, int y) {//white on top
-  if (somethingInTheWay(x, y , targetX, targetY)){
+  if (globalChecks(x, y , targetX, targetY, white)){
     return false;
   }
     if(targetY==y && targetX==x){

@@ -40,58 +40,52 @@ void draw() {
 void mousePressed() {
   int row = mouseToXY()[0];
   int col = mouseToXY()[1];
-  if(!movingAnyPiece && (boardArray[col][row].white != whiteTurn)){
+
+  if (isSelectAble(row, col)) {
     return;
   }
-  if(boardArray[col][row] instanceof noPiece && !movingAnyPiece){
-    return;
-  }
-  if(!movingAnyPiece){
+
+  if (!movingAnyPiece) {
     selectedRow = mouseToXY()[0];
     selectedCol = mouseToXY()[1];
     selectedPiece = boardArray[col][row];
     selectedPiece.moving=true;
     movingAnyPiece=true;
-  }else if(selectedPiece.checkMove(row, col, selectedRow, selectedCol)){
+  } else if (selectedPiece.checkMove(row, col, selectedRow, selectedCol)) {
     boardArray[selectedCol][selectedRow] = new noPiece(true);
     boardArray[col][row] = selectedPiece;
     selectedPiece.moving=false;
     movingAnyPiece=false;
     whiteTurn = !whiteTurn;
   }
-  
 }
-
-void renderPieces(){
-  for(int col=0; col<boardArray.length; col++){
-    BasePiece[] collumnArray = boardArray[col];
-    for(int row=0; row<collumnArray.length; row++){
-      BasePiece piece = collumnArray[row];
-      if(piece.moving==false){
-        piece.render(row*100+50, col*100+50);
-      }else{
-        piece.render(mouseX, mouseY);
-      }
+boolean isSelectAble(int row, int col) {
+  if (!movingAnyPiece) {
+    if ((boardArray[col][row].white != whiteTurn)) {
+      return false;
+    }
+    if (boardArray[col][row] instanceof noPiece) {
+      return false;
     }
   }
+  return true;
 }
-boolean somethingInTheWay(int x, int y, int targetX, int targetY){
-  if(x==targetX){
+
+boolean globalChecks(int x, int y, int targetX, int targetY, boolean white) {
+  if (x==targetX) {
+    //color checks
+
+    //is piece in the way?
     int range = y-targetY;
-    for(int i=y; i==targetY; i+=range/abs(range)){
+    for (int i=y; i==targetY; i+=range/abs(range)) {
       println(i);
     }
-    
   }
-  if(y==targetY){
+  if (y==targetY) {
     int range = x-targetX;
-    for(int i=x; i==targetX; i+=range/abs(range)){
+    for (int i=x; i==targetX; i+=range/abs(range)) {
       println(i);
     }
   }
-  return false;
-}
-
-boolean globalChecks(int x, int y, int targetX, int targetY, boolean white){
   return false;
 }

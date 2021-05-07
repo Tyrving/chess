@@ -66,3 +66,17 @@ void checkerBackground() {//generate checkered background based on UI height and
     }
   }
 }
+
+void renderPieces(){
+  for(int col=0; col<boardArray.length; col++){
+    BasePiece[] collumnArray = boardArray[col];
+    for(int row=0; row<collumnArray.length; row++){
+      BasePiece piece = collumnArray[row];
+      if(piece.moving==false){
+        piece.render(row*100+50, col*100+50);
+      }else{
+        piece.render(mouseX, mouseY);
+      }
+    }
+  }
+}
