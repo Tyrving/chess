@@ -67,6 +67,16 @@ void checkerBackground() {//generate checkered background based on UI height and
   }
 }
 
+PImage getImage(byte row, byte col){
+  Piece piece = pieceArray[row][col];
+  boolean side = colorArray[row][col];
+  switch piece{
+    
+  }
+  return 
+  
+}
+
 void renderPieces(){
   for(int col=0; col<boardArray.length; col++){
     BasePiece[] collumnArray = boardArray[col];

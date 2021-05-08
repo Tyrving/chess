@@ -12,19 +12,21 @@ PImage b_knight;
 PImage w_knight;
 boolean movingAnyPiece = false;
 boolean whiteTurn = true;
-BasePiece selectedPiece = new noPiece(true);
 int selectedRow;
 int selectedCol;
 
-BasePiece[][] boardArray = new BasePiece[8][8];
+enum Piece{
+  Rook, Knight, Bishop, King, Queen, Pawn
+}
+
+Piece[][] pieceArray = new Piece[8][8];
+boolean[][] colorArray= new boolean[8][8];
 
 void setup() {
   size(800, 800);//please multiple of 8 for tiling purposes
   imageMode(CENTER);
   loadImages();
-  checkerBackground();
   startPiecesArrangement();
-  renderPieces();
 }
 
 void draw() {
@@ -71,21 +73,9 @@ boolean isSelectAble(int row, int col) {
   return true;
 }
 
-boolean globalChecks(int x, int y, int targetX, int targetY, boolean white) {
-  if (x==targetX) {
-    //color checks
-
-    //is piece in the way?
-    int range = y-targetY;
-    for (int i=y; i==targetY; i+=range/abs(range)) {
-      println(i);
-    }
-  }
-  if (y==targetY) {
-    int range = x-targetX;
-    for (int i=x; i==targetX; i+=range/abs(range)) {
-      println(i);
-    }
-  }
+boolean isPieceInWay(byte x, byte y, byte targetX, byte targetY){
+  return false;
+}
+boolean targetColor(byte row, byte col){
   return false;
 }
