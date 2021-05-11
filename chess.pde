@@ -14,8 +14,6 @@ Board board;
 
 
 void setup() {
-  stroke(0);
-  fill(0);
   size(800, 800);//please multiple of 8 for tiling purposes
   imageMode(CENTER);
   loadImages();
@@ -25,12 +23,19 @@ void setup() {
 void draw() {
   background(0);
   board.render();
+  stroke(0);
+  fill(0);
   text(mouseX + " - " + mouseY, 5, 15);
   text(mouseToXY()[0] + " - " + mouseToXY()[1], 5, 35);
 }
 
 void mousePressed() {
-  int row = mouseToXY()[0];
-  int col = mouseToXY()[1];
-  
+  byte row = mouseToXY()[0];
+  byte col = mouseToXY()[1];
+  BasePiece piece = board.boardArray[row][col];
+  if(board.anySelected) return;
+  if(piece.isSelectable()){
+    piece.selected = true;
+    board.whiteTurn = !board.whiteTurn;
+  }
 }

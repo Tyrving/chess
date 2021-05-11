@@ -1,9 +1,11 @@
 class Board {
   BasePiece[][] boardArray = new BasePiece[8][8];
   boolean anySelected;
+  boolean whiteTurn;
   Board() {
     initialLayout();
     anySelected = false;
+    whiteTurn = true;
   }
   
   void initialLayout() {
@@ -40,18 +42,31 @@ class Board {
   }
   
   void renderPieces() {
+    byte movingPieceX = 0;
+    byte movingPieceY = 0;
+    boolean movingPiece = false;
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
-        boardArray[row][col].render();
+        BasePiece piece = boardArray[row][col];
+        if(piece.selected){
+          movingPieceX = row;
+          movingPieceY = col;
+          movingPiece = true;
+        }else{
+          piece.render();
+        }
       }
+    }
+    if(movingPiece){
+      image(board.boardArray[movingPieceX][movingPieceY].myImage, mouseX, mouseY);
     }
   }
 
   void checkerBackground() {//generate checkered background based on UI height and width
     int tileX = width/8;
     int tileY = tileX;//asssuming UI is a square
-    for (int col=0; col<8; col++) {
-      for (int row=0; row<8; row++) {
+    for (byte col=0; col<8; col++) {
+      for (byte row=0; row<8; row++) {
         int tileColor = (((col+row)%2)*100)+155;//make tile color
         stroke(tileColor);
         fill(tileColor);

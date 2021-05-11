@@ -15,7 +15,11 @@ class BasePiece {
   void render() {
     image(myImage, row*(width/8)+(width/16), col*(height/8)+(height/16));
   }
-
+  boolean isSelectable(){
+    if(white != board.whiteTurn) return false;
+    if(this instanceof noPiece) return false;
+    return true;
+  }
 }
 
 class Pawn extends BasePiece {

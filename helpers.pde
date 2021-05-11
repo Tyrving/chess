@@ -14,11 +14,9 @@ void loadImages() {
   w_knight = loadImage("w_knight.png");
 }
 
-int[] mouseToXY(){
-  int row = mouseX/(width/8);
-  int col = mouseY/(height/8);
-  int[] out = new int[2];
-  out[0] = row;
-  out[1] = col;
+byte[] mouseToXY(){
+  byte[] out = new byte[2];
+  out[0] = byte(mouseX/(width/8));
+  out[1] = byte(mouseY/(height/8));
   return out;
 }
