@@ -11,9 +11,12 @@ PImage w_rook;
 PImage b_knight;
 PImage w_knight;
 Board board;
-
+enum Turn{
+  Black, White, Moving
+}
 
 void setup() {
+  frameRate(60);
   size(800, 800);//please multiple of 8 for tiling purposes
   imageMode(CENTER);
   loadImages();
@@ -33,9 +36,13 @@ void mousePressed() {
   byte row = mouseToXY()[0];
   byte col = mouseToXY()[1];
   BasePiece piece = board.boardArray[row][col];
-  if(board.anySelected) return;
-  if(piece.isSelectable()){
-    piece.selected = true;
-    board.whiteTurn = !board.whiteTurn;
+  if (!board.anySelected) {
+    if (piece.isSelectable()) {
+      board.select(piece);
+    }
+  } else {
+    if(piece.checkTarget(row, col)){
+      board.place(row, col, piece);
+    }
   }
 }

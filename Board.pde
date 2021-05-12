@@ -1,13 +1,13 @@
 class Board {
   BasePiece[][] boardArray = new BasePiece[8][8];
   boolean anySelected;
-  boolean whiteTurn;
+  Turn turnState;
   Board() {
     initialLayout();
     anySelected = false;
-    whiteTurn = true;
+    turnState = Turn.White;
   }
-  
+
   void initialLayout() {
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
@@ -35,12 +35,12 @@ class Board {
       boardArray[7][col] = new Rook(i*2==0, (byte)7, col);
     }
   }
-  
-  void render(){
+
+  void render() {
     checkerBackground();
     renderPieces();
   }
-  
+
   void renderPieces() {
     byte movingPieceX = 0;
     byte movingPieceY = 0;
@@ -48,20 +48,35 @@ class Board {
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
         BasePiece piece = boardArray[row][col];
-        if(piece.selected){
+        if (piece.selected) {
           movingPieceX = row;
           movingPieceY = col;
           movingPiece = true;
-        }else{
+        } else {
           piece.render();
         }
       }
     }
-    if(movingPiece){
+    if (movingPiece) {
       image(board.boardArray[movingPieceX][movingPieceY].myImage, mouseX, mouseY);
+      movingPiece = false;
     }
   }
-
+  
+  void select(BasePiece piece) {
+    board.anySelected = true;
+    piece.selected = true;
+  //  board.whiteTurn = !board.whiteTurn;
+  }
+  
+  void place(byte row, byte col, BasePiece piece){
+    piece.row = row;
+    piece.col = col;
+    piece.selected = false;
+    board.anySelected = false;
+    
+  }
+  
   void checkerBackground() {//generate checkered background based on UI height and width
     int tileX = width/8;
     int tileY = tileX;//asssuming UI is a square

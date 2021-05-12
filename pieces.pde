@@ -15,9 +15,16 @@ class BasePiece {
   void render() {
     image(myImage, row*(width/8)+(width/16), col*(height/8)+(height/16));
   }
-  boolean isSelectable(){
-    if(white != board.whiteTurn) return false;
-    if(this instanceof noPiece) return false;
+  boolean isSelectable() {
+    println(board.turnState);
+    if (((this.white==true) && (board.turnState == Turn.White)) ^ 
+         /* cont */   ((this.white==false) && (board.turnState == Turn.Black))) return true;
+    if (this instanceof noPiece) return false;
+    return true;
+  }
+  boolean checkTarget(byte row, byte col) {
+    this.row = row;
+    this.col = col;
     return true;
   }
 }
@@ -42,7 +49,6 @@ class Rook extends BasePiece {
       myImage = b_rook;
     }
   }
-  
 }
 
 class Bishop extends BasePiece {
@@ -54,7 +60,6 @@ class Bishop extends BasePiece {
       myImage = b_bishop;
     }
   }
-  
 }
 
 class Knight extends BasePiece {
@@ -66,7 +71,6 @@ class Knight extends BasePiece {
       myImage = b_knight;
     }
   }
-  
 }
 
 class King extends BasePiece {
@@ -78,7 +82,6 @@ class King extends BasePiece {
       myImage = b_king;
     }
   }
-  
 }
 
 class Queen extends BasePiece {
@@ -90,7 +93,6 @@ class Queen extends BasePiece {
       myImage = b_queen;
     }
   }
-  
 }
 
 class noPiece extends BasePiece {
