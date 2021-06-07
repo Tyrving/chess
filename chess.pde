@@ -11,9 +11,6 @@ PImage w_rook;
 PImage b_knight;
 PImage w_knight;
 Board board;
-enum Turn{
-  Black, White, Moving
-}
 
 void setup() {
   frameRate(60);
@@ -28,8 +25,8 @@ void draw() {
   board.render();
   stroke(0);
   fill(0);
-  text(mouseX + " - " + mouseY, 5, 15);
-  text(mouseToXY()[0] + " - " + mouseToXY()[1], 5, 35);
+  text(mouseToXY()[0] + " - " + mouseToXY()[1], 5, 15);
+  text(frameRate, 5, 30);
 }
 
 void mousePressed() {
@@ -41,8 +38,25 @@ void mousePressed() {
       board.select(piece);
     }
   } else {
-    if(piece.checkTarget(row, col)){
-      board.place(row, col, piece);
+    for (BasePiece[] movingPieceRow : board.boardArray) {
+      for (BasePiece movingPiece : movingPieceRow) {
+        if (movingPiece.selected==true) {
+          if (movingPiece.allChecks(row, col)) {
+            board.place(row, col, movingPiece);
+            return;
+          }
+        }
+      }
     }
+  }
+}
+
+
+void keyPressed() {
+  if (key=='q') {
+    byte row = mouseToXY()[0];
+    byte col = mouseToXY()[1];
+    BasePiece piece = board.boardArray[row][col];
+    println(piece);
   }
 }

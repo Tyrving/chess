@@ -1,11 +1,11 @@
 class Board {
   BasePiece[][] boardArray = new BasePiece[8][8];
   boolean anySelected;
-  Turn turnState;
+  boolean currentColorWhite;
   Board() {
     initialLayout();
     anySelected = false;
-    turnState = Turn.White;
+    currentColorWhite = true;
   }
 
   void initialLayout() {
@@ -42,52 +42,36 @@ class Board {
   }
 
   void renderPieces() {
-    byte movingPieceX = 0;
-    byte movingPieceY = 0;
-    boolean movingPiece = false;
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
-        BasePiece piece = boardArray[row][col];
-        if (piece.selected) {
-          movingPieceX = row;
-          movingPieceY = col;
-          movingPiece = true;
-        } else {
-          piece.render();
-        }
+        boardArray[row][col].render();
       }
     }
-    if (movingPiece) {
-      image(board.boardArray[movingPieceX][movingPieceY].myImage, mouseX, mouseY);
-      movingPiece = false;
-    }
   }
-  
+
   void select(BasePiece piece) {
     board.anySelected = true;
     piece.selected = true;
-  //  board.whiteTurn = !board.whiteTurn;
   }
-  
-  void place(byte row, byte col, BasePiece piece){
+
+  void place(byte row, byte col, BasePiece piece) {
+    boardArray[piece.row][piece.col] = new noPiece(true, piece.row, piece.col);
     piece.row = row;
     piece.col = col;
     piece.selected = false;
     board.anySelected = false;
-    
+    boardArray[row][col] = piece;
+    currentColorWhite = !currentColorWhite;
   }
-  
+
   void checkerBackground() {//generate checkered background based on UI height and width
     int tileX = width/8;
-    int tileY = tileX;//asssuming UI is a square
     for (byte col=0; col<8; col++) {
       for (byte row=0; row<8; row++) {
         int tileColor = (((col+row)%2)*100)+155;//make tile color
         stroke(tileColor);
         fill(tileColor);
-        int xLoc = row*tileX;
-        int yLoc = col*tileX;
-        rect(xLoc, yLoc, tileX, tileY);
+        rect(row*tileX, col*tileX, tileX, tileX);
       }
     }
   }
