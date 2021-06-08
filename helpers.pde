@@ -1,82 +1,76 @@
 
-void loadImages() {
-  String dir = "resources/";
-  b_pawn = loadImage(dir+"b_pawn.png");
-  w_pawn = loadImage(dir+"w_pawn.png");
-  b_king = loadImage(dir+"b_king.png");
-  w_king = loadImage(dir+"w_king.png");
-  b_queen = loadImage(dir+"b_queen.png");
-  w_queen = loadImage(dir+"w_queen.png");
-  b_bishop = loadImage(dir+"b_bishop.png");
-  w_bishop = loadImage(dir+"w_bishop.png");
-  b_rook = loadImage(dir+"b_rook.png");
-  w_rook = loadImage(dir+"w_rook.png");
-  b_knight = loadImage(dir+"b_knight.png");
-  w_knight = loadImage(dir+"w_knight.png");
+void loadImages() {//clean up main file
+  b_pawn = loadImage("b_pawn.png");
+  w_pawn = loadImage("w_pawn.png");
+  b_king = loadImage("b_king.png");
+  w_king = loadImage("w_king.png");
+  b_queen = loadImage("b_queen.png");
+  w_queen = loadImage("w_queen.png");
+  b_bishop = loadImage("b_bishop.png");
+  w_bishop = loadImage("w_bishop.png");
+  b_rook = loadImage("b_rook.png");
+  w_rook = loadImage("w_rook.png");
+  b_knight = loadImage("b_knight.png");
+  w_knight = loadImage("w_knight.png");
 }
 
-
-void startPiecesArrangement(){
-  for(int row=0; row<8; row++){
-    for(int col=0; col<8; col++){
-      boardArray[row][col] = new noPiece(true);//true/false is arbitrary, but satisfies my base class thing
-    }
-  }
-  for(int i=0; i<8; i++){
-    boardArray[1][i] = new Pawn(true);
-    boardArray[6][i] = new Pawn(false);
-  }
-  for(int i=0; i<2; i++){
-  boardArray[i*7][0] = new Rook(i*2==0);
-  boardArray[i*7][1] = new Knight(i*2==0);
-  boardArray[i*7][2] = new Bishop(i*2==0);
-  if(i==0){
-  boardArray[i*7][3] = new King(i*2==0);
-  boardArray[i*7][4] = new Queen(i*2==0);
-  }else{
-  boardArray[i*7][3] = new Queen(i*2==0);
-  boardArray[i*7][4] = new King(i*2==0);
-  }
-  boardArray[i*7][5] = new Bishop(i*2==0);
-  boardArray[i*7][6] = new Knight(i*2==0);
-  boardArray[i*7][7] = new Rook(i*2==0);
-  }
-}
-
-
-int[] mouseToXY(){
-  int row = mouseX/(width/8);
-  int col = mouseY/(height/8);
-  int[] out = new int[2];
-  out[0] = row;
-  out[1] = col;
+byte[] mouseToXY() {//Get mouse x and y in terms of chess tile coordinates, 0-7
+  byte[] out = new byte[2];
+  out[0] = byte(mouseX/(width/8));
+  out[1] = byte(mouseY/(height/8));
   return out;
 }
-void checkerBackground() {//generate checkered background based on UI height and width
-  int tileX = width/8;
-  int tileY = tileX;//asssuming UI is a square
-  for (int col=0; col<8; col++) {
-    for (int row=0; row<8; row++) {
-      int tileColor = (((col+row)%2)*100)+155;//make tile color
-      stroke(tileColor);
-      fill(tileColor);
-      int xLoc = row*tileX;
-      int yLoc = col*tileX;
-      rect(xLoc, yLoc, tileX, tileY);
-    }
+
+boolean checkDiagonalPath(byte x1, byte y1, byte x2, byte y2) {
+  byte pathLength = byte(abs(x2 - x1));
+  byte xDir = 1;
+  byte yDir = 1;
+  if (x2-x1>0) {//set x and y directions for following loop based 
+    xDir = 1; // on pos/neg movement in each axis
   }
+  if (x2-x1<0) {
+    xDir = -1;
+  }
+  if (y2-y1>0) {
+    yDir = 1;
+  }
+  if (y2-y1<0) {
+    yDir = -1;
+  }
+  for (byte i = 1; i < pathLength; i++) {//for each cell in the path,
+    byte x = byte(x1 + (i*xDir));// add or subtract based on direction of movement to get the cell to check
+    byte y = byte(y1 + (i*yDir));
+    if (board.boardArray[x][y] instanceof noPiece) continue; // nothing in the way
+    else return false; // something in the way, uh oh, spaghetti-o *aneurism intensifies*
+  }
+
+  return true;
 }
 
-void renderPieces(){
-  for(int col=0; col<boardArray.length; col++){
-    BasePiece[] collumnArray = boardArray[col];
-    for(int row=0; row<collumnArray.length; row++){
-      BasePiece piece = collumnArray[row];
-      if(piece.moving==false){
-        piece.render(row*100+50, col*100+50);
-      }else{
-        piece.render(mouseX, mouseY);
-      }
+boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//basically above, just for straight lines
+  byte pathLength = byte(abs((x2 - x1) + (y2 - y1)));
+  byte xDir = 1;
+  byte yDir = 1;
+  if (x2-x1>0) {//same as above, but x/ydir can be zero, in case the piece does not move in that direction
+    xDir = 1;
+  } else if (x2-x1<0) {
+    xDir = -1;
+  } else xDir = 0;
+  if (y2-y1>0) {
+    yDir = 1;
+  } else if (y2-y1<0) {
+    yDir = -1;
+  } else {
+    yDir = 0;
+  }
+  for (byte i = 1; i < pathLength; i++) {
+    byte x = byte(x1 + (i*xDir));
+    byte y = byte(y1 + (i*yDir));
+    if (board.boardArray[x][y] instanceof noPiece) { 
+      continue;
+    } else { 
+      return false;
     }
   }
+  return true;
 }
