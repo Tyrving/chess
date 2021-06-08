@@ -1,6 +1,7 @@
 # chess
-chess
+
 This is chess. 
+
 I am writing this for skilled coder in the MR discord, to show I am not a pleb.
 
 Usage:
