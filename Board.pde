@@ -8,7 +8,7 @@ class Board {
     currentColorWhite = true;
   }
 
-  void initialLayout() {
+  private void initialLayout() {
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
         boardArray[row][col] = new noPiece(true, row, col);//true/false is arbitrary, but satisfies my base class thing
@@ -36,12 +36,12 @@ class Board {
     }
   }
 
-  void render() {
+  public void render() {
     checkerBackground();
     renderPieces();
   }
 
-  void renderPieces() {
+  private void renderPieces() {
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
         boardArray[row][col].render();
@@ -64,7 +64,7 @@ class Board {
     currentColorWhite = !currentColorWhite;
   }
 
-  void checkerBackground() {//generate checkered background based on UI height and width
+  private void checkerBackground() {//generate checkered background based on UI height and width
     int tileX = width/8;
     for (byte col=0; col<8; col++) {
       for (byte row=0; row<8; row++) {

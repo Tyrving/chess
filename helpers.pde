@@ -49,8 +49,10 @@ boolean checkDiagonalPath(byte x1, byte y1, byte x2, byte y2) {
 }
 
 boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//TODO
-  int pathLength = abs(x2 - x1);
-  boolean horizontal = x1==x2 ? true : false;
+  println("linpath");
+  int pathLength = abs((x2 - x1) + (y2 - y1));
+  println(pathLength);
+  boolean horizontal = x1==x2 ? true : false; // horizontal or vertical
 
   int xDir = 1;
   int yDir = 1;
@@ -70,8 +72,11 @@ boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//TODO
     int x = x1 + (i*xDir);
     int y = y1 + (i*yDir);
     println(x, y);
-    if (board.boardArray[x][y] instanceof noPiece) continue; // No obstacles here: keep going
-    else return false; // Obstacle found before reaching target: the move is invalid
+    if (board.boardArray[x][y] instanceof noPiece) { 
+      continue; // No obstacles here: keep going
+    } else { 
+      return false; // Obstacle found before reaching target: the move is invalid
+    }
   }
   return true;
 }
