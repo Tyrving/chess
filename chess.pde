@@ -1,3 +1,6 @@
+import processing.sound.*;
+SoundFile audio;
+
 PImage b_pawn;
 PImage w_pawn;
 PImage b_king;
@@ -25,6 +28,8 @@ byte tileXHalf;
 byte tileYHalf;
 
 void setup() {
+  audio = new SoundFile(this, "rick.wav");
+  audio.play();
   noStroke();
   frameRate(60);
   size(800, 800);//please multiple of 8 for tiling purposes
