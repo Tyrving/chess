@@ -1,8 +1,8 @@
 class BasePiece { // base chess piece which is extended by all others
   boolean white;
   boolean selected;//for rendering, if selected render at mouse position
-  boolean firstMove; // for pawns
-  PImage myImage;//store image locally for easy of rendering, sorry memory consumption
+  boolean firstMove; // for pawn stuff
+  PImage myImage;//store image locally for ease of rendering
   byte row;// x y grid coords, should always be the same as coords within boardArray
   byte col;
   BasePiece(boolean white, byte row, byte col) {
@@ -13,16 +13,16 @@ class BasePiece { // base chess piece which is extended by all others
     firstMove = true;
   }
   void render() {//render image at x y grid coords, 
-  //unless its selected, then render at mouse for drag-and-drop effect
+    //unless its selected, then render at mouse for drag-and-drop effect
     if (!selected) {
-      image(myImage, row*(width/8)+(width/16), col*(height/8)+(height/16));
+      image(myImage, row*tileX+tileXHalf, col*tileY+tileYHalf);
       //the screen/8 is for the cell dimentions, /16 is for centering it within the cell
     } else {
       image(myImage, mouseX, mouseY);
     }
   }
   boolean isSelectable() {//is this piece of the right color to 
-  //select, based on who's turn it is?
+    //select, based on who's turn it is?
     if (this instanceof noPiece) {
       return false;
     } else if (this.white != board.currentColorWhite) {
@@ -48,7 +48,7 @@ class BasePiece { // base chess piece which is extended by all others
     }
     return false;
   }
-  boolean checkTarget(byte row, byte col) {//is this a valid target to claim?
+  protected boolean checkTarget(byte row, byte col) {//is this a valid target to claim?
     BasePiece target = board.boardArray[row][col];
     if (target instanceof noPiece) {//claim any nopiece object
       return true;
@@ -59,18 +59,17 @@ class BasePiece { // base chess piece which is extended by all others
     return true;
   }
 
-  boolean checkPath(byte row, byte col) {//extended throughout the other pieces
+  protected boolean checkPath(byte row, byte col) {//extended throughout the other pieces
     return false;
   }
-  boolean allChecks(byte row, byte col) {//nice wrapper for all my piece checking stuff
+  public boolean allChecks(byte row, byte col) {//nice wrapper for all my piece checking stuff
     if (row==this.row && col==this.col) {//allow a piece to go back into 
-    //its original cell at any time
+      //its original cell at any time
       return true;
     }
-
-    if (checkTarget(row, col)) {
-      if (checkPath(row, col)) {
-        if (wayIsClear(row, col)) {
+    if (checkTarget(row, col)) {//if its a valid target, continue
+      if (checkPath(row, col)) { // if the path is a valid move solely based on piece movement algos
+        if (wayIsClear(row, col)) {// are there pieces in the way, of the validated movement path?
           return true;
         }
       }
@@ -83,31 +82,31 @@ class Pawn extends BasePiece {
   Pawn(boolean white, byte row, byte col) {
     super(white, row, col);
     if (white==true) {
-      myImage = w_pawn;
+      myImage = w_pawn;//set image to corresponding color and piece
     } else {
       myImage = b_pawn;
     }
   }
-  boolean checkPath(byte row, byte col) {
+  boolean checkPath(byte row, byte col) {// can the pawn move there
     byte x1 = this.row;
     byte y1 = this.col;
     byte x2 = row;
     byte y2 = col;
     byte deltay = byte(y2-y1);
     byte deltax = byte(x2-x1);
-    if (x1==x2) {
-      if (white) {
-        if (firstMove) {
+    if (x1==x2) {//if the move is vertical
+      if (white) {//check colors to determine which way the piece can move 
+        if (firstMove) {//on first move it can move two squares
           if (deltay<3 && deltay>-1) {
             this.firstMove = false;
             return true;
           }
         } else {
-          if (deltay<2 && deltay>-1) {
+          if (deltay<2 && deltay>-1) {//second move it can only go one square
             return true;
           }
         }
-      } else {
+      } else {//for black team
         if (firstMove) {
           if (deltay>-3 && deltay<1) {
             this.firstMove = false;
@@ -120,14 +119,14 @@ class Pawn extends BasePiece {
         }
       }
     }
-    if (white) {
-      if (deltay==1 && abs(deltax)==1) {
-        if (!(board.boardArray[row][col] instanceof noPiece)) {
+    if (white) { //assuming move is not vetical, check color for direction again
+      if (deltay==1 && abs(deltax)==1) {//if it is diagonal in the right direction
+        if (!(board.boardArray[row][col] instanceof noPiece)) {//and targeting a piece
           return true;
         }
       }
     } else {
-      if (deltay==-1 && abs(deltax)==1) {
+      if (deltay==-1 && abs(deltax)==1) {//opposite deltay direction from above
         if (!(board.boardArray[row][col] instanceof noPiece)) {
           return true;
         }
@@ -152,7 +151,7 @@ class Rook extends BasePiece {
     byte y1 = this.col;
     byte x2 = row;
     byte y2 = col;
-    if ((x1==x2 && y1!=y2)||(x1!=x2 && y1==y2)) {
+    if ((x1==x2 && y1!=y2)||(x1!=x2 && y1==y2)) {//if its vertical or horional
       return true;
     }
 
@@ -174,7 +173,7 @@ class Bishop extends BasePiece {
     byte y1 = this.col;
     byte x2 = row;
     byte y2 = col;
-    if (abs(x2-x1)==abs(y2-y1)) {
+    if (abs(x2-x1)==abs(y2-y1)) {//if valid diagonal move
       return true;
     }
     return false;
@@ -190,7 +189,7 @@ class Knight extends BasePiece {
       myImage = b_knight;
     }
   }
-  boolean wayIsClear(byte row, byte col) {
+  boolean wayIsClear(byte row, byte col) {//can jump over other pieces
     return true;
   }
 
@@ -199,10 +198,10 @@ class Knight extends BasePiece {
     byte y1 = this.col;
     byte x2 = row;
     byte y2 = col;
-    if ((abs(x2-x1)==1)&&(abs(y2-y1)==2)) {
+    if ((abs(x2-x1)==1)&&(abs(y2-y1)==2)) {//idk man it works
       return true;
     }
-    if ((abs(x2-x1)==2)&&(abs(y2-y1)==1)) {
+    if ((abs(x2-x1)==2)&&(abs(y2-y1)==1)) {//same as above but for horizonal movement
       return true;
     }
     return false;
@@ -223,8 +222,9 @@ class King extends BasePiece {
     byte y1 = this.col;
     byte x2 = row;
     byte y2 = col;
-    if (abs(x2-x1)<2 && abs(y2-y1)<2) {
-      return true;
+    if (abs(x2-x1)<2 && abs(y2-y1)<2) {//anywhere within once square
+      return true;//note, I use < instead of == a lot because I want 
+      //the pieces to move back to their own squares
     }
     return false;
   }

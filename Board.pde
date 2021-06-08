@@ -2,16 +2,19 @@ class Board {
   BasePiece[][] boardArray = new BasePiece[8][8];
   boolean anySelected;
   boolean currentColorWhite;
+  byte movingPieceRow;
+  byte movingPieceCol;
   Board() {
     initialLayout();
     anySelected = false;
     currentColorWhite = true;
   }
 
-  private void initialLayout() {
+  private void initialLayout() {//my obscenely convoluted method of laying out start pieces
     for (byte row=0; row<8; row++) {
       for (byte col=0; col<8; col++) {
-        boardArray[row][col] = new noPiece(true, row, col);//true/false is arbitrary, but satisfies my base class thing
+        boardArray[row][col] = new noPiece(true, row, col);//true/false is arbitrary for noPiece,
+        //but satisfies my base class constructor, and this is only run once, so performance is not super rellevant
       }
     }
     for (byte i=0; i<8; i++) {
@@ -36,25 +39,14 @@ class Board {
     }
   }
 
-  public void render() {
-    checkerBackground();
-    renderPieces();
-  }
-
-  private void renderPieces() {
-    for (byte row=0; row<8; row++) {
-      for (byte col=0; col<8; col++) {
-        boardArray[row][col].render();
-      }
-    }
-  }
-
-  void select(BasePiece piece) {
+  public void select(BasePiece piece) {
     board.anySelected = true;
     piece.selected = true;
+    movingPieceRow = piece.row;
+    movingPieceCol = piece.col;
   }
 
-  void place(byte row, byte col, BasePiece piece) {
+  public void place(byte row, byte col, BasePiece piece) {
     boardArray[piece.row][piece.col] = new noPiece(true, piece.row, piece.col);
     piece.row = row;
     piece.col = col;
@@ -62,16 +54,33 @@ class Board {
     board.anySelected = false;
     boardArray[row][col] = piece;
     currentColorWhite = !currentColorWhite;
+    movingPieceRow = -1; // should INTENTIONALLY error if called like this
+    movingPieceCol = -1;// now i know if it goofs up
   }
 
+  public void render() {//wrap it up into one function
+    checkerBackground();
+    renderPieces();
+  }
+
+  private void renderPieces() {//just call the render methods for every piece
+    for (byte row=0; row<8; row++) {
+      for (byte col=0; col<8; col++) {
+        boardArray[row][col].render();
+      }
+    }
+  }
+
+
   private void checkerBackground() {//generate checkered background based on UI height and width
-    int tileX = width/8;
+    fill(255);
+    rect(0, 0, width, height);
+    fill(155);
     for (byte col=0; col<8; col++) {
       for (byte row=0; row<8; row++) {
-        int tileColor = (((col+row)%2)*100)+155;//make tile color
-        stroke(tileColor);
-        fill(tileColor);
-        rect(row*tileX, col*tileX, tileX, tileX);
+        if ((col+row)%2==0) {
+          rect(row*tileX, col*tileY, tileX, tileY);
+        }
       }
     }
   }

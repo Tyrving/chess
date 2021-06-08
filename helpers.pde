@@ -1,5 +1,5 @@
 
-void loadImages() {
+void loadImages() {//clean up main file
   b_pawn = loadImage("b_pawn.png");
   w_pawn = loadImage("w_pawn.png");
   b_king = loadImage("b_king.png");
@@ -14,7 +14,7 @@ void loadImages() {
   w_knight = loadImage("w_knight.png");
 }
 
-byte[] mouseToXY() {
+byte[] mouseToXY() {//Get mouse x and y in terms of chess tile coordinates, 0-7
   byte[] out = new byte[2];
   out[0] = byte(mouseX/(width/8));
   out[1] = byte(mouseY/(height/8));
@@ -22,11 +22,11 @@ byte[] mouseToXY() {
 }
 
 boolean checkDiagonalPath(byte x1, byte y1, byte x2, byte y2) {
-  int pathLength = abs(x2 - x1);
-  int xDir = 1;
-  int yDir = 1;
-  if (x2-x1>0) {
-    xDir = 1;
+  byte pathLength = byte(abs(x2 - x1));
+  byte xDir = 1;
+  byte yDir = 1;
+  if (x2-x1>0) {//set x and y directions for following loop based 
+    xDir = 1; // on pos/neg movement in each axis
   }
   if (x2-x1<0) {
     xDir = -1;
@@ -37,26 +37,21 @@ boolean checkDiagonalPath(byte x1, byte y1, byte x2, byte y2) {
   if (y2-y1<0) {
     yDir = -1;
   }
-  for (int i = 1; i < pathLength; i++) {
-    int x = x1 + (i*xDir);
-    int y = y1 + (i*yDir);
-    println(x, y);
-    if (board.boardArray[x][y] instanceof noPiece) continue; // No obstacles here: keep going
-    else return false; // Obstacle found before reaching target: the move is invalid
+  for (byte i = 1; i < pathLength; i++) {//for each cell in the path,
+    byte x = byte(x1 + (i*xDir));// add or subtract based on direction of movement to get the cell to check
+    byte y = byte(y1 + (i*yDir));
+    if (board.boardArray[x][y] instanceof noPiece) continue; // nothing in the way
+    else return false; // something in the way, uh oh, spaghetti-o *aneurism intensifies*
   }
 
   return true;
 }
 
-boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//TODO
-  println("linpath");
-  int pathLength = abs((x2 - x1) + (y2 - y1));
-  println(pathLength);
-  boolean horizontal = x1==x2 ? true : false; // horizontal or vertical
-
-  int xDir = 1;
-  int yDir = 1;
-  if (x2-x1>0) {
+boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//basically above, just for straight lines
+  byte pathLength = byte(abs((x2 - x1) + (y2 - y1)));
+  byte xDir = 1;
+  byte yDir = 1;
+  if (x2-x1>0) {//same as above, but x/ydir can be zero, in case the piece does not move in that direction
     xDir = 1;
   } else if (x2-x1<0) {
     xDir = -1;
@@ -68,14 +63,13 @@ boolean checkLinearPath(byte x1, byte y1, byte x2, byte y2) {//TODO
   } else {
     yDir = 0;
   }
-  for (int i = 1; i < pathLength; i++) {
-    int x = x1 + (i*xDir);
-    int y = y1 + (i*yDir);
-    println(x, y);
+  for (byte i = 1; i < pathLength; i++) {
+    byte x = byte(x1 + (i*xDir));
+    byte y = byte(y1 + (i*yDir));
     if (board.boardArray[x][y] instanceof noPiece) { 
-      continue; // No obstacles here: keep going
+      continue;
     } else { 
-      return false; // Obstacle found before reaching target: the move is invalid
+      return false;
     }
   }
   return true;
